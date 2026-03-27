@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Growth Flywheel — Damina</title>
+
+    <!-- ===========================================
+         FONTS: Sora (display) + Inter (body)
+         Per Damina brand guidelines
+         =========================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           DAMINA BRAND CSS VARIABLES
+           Colors from visual-identity.md
+           =========================================== */
+        :root {
+            /* Brand Colors */
+            --navy:         #0F1F3D;
+            --navy-deep:    #0a1628;
+            --navy-mid:     #162d52;
+            --teal:         #0D9488;
+            --teal-dim:     rgba(13, 148, 136, 0.15);
+            --teal-glow:    rgba(13, 148, 136, 0.3);
+            --off-white:    #F8F7F4;
+            --slate:        #475569;
+            --light-slate:  #CBD5E1;
+            --amber:        #D97706;
+            --pure-white:   #FFFFFF;
+
+            /* Typography */
+            --font-display: 'Sora', sans-serif;
+            --font-body:    'Inter', sans-serif;
+
+            /* Type scale — all use clamp() per viewport-base.css */
+            --title-size:    clamp(1.5rem, 5vw, 4rem);
+            --h2-size:       clamp(1.25rem, 3.5vw, 2.5rem);
+            --h3-size:       clamp(1rem, 2.5vw, 1.75rem);
+            --body-size:     clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size:    clamp(0.65rem, 1vw, 0.875rem);
+            --label-size:    clamp(0.6rem, 0.9vw, 0.8rem);
+
+            /* Spacing */
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap:   clamp(0.5rem, 2vw, 2rem);
+            --element-gap:   clamp(0.25rem, 1vw, 1rem);
+
+            /* Animation */
+            --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --dur-norm: 0.6s;
+            --dur-slow: 0.9s;
+        }
+
+        /* ===========================================
+           VIEWPORT BASE CSS (mandatory inclusion)
+           =========================================== */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+        }
+
+        .card, .container, .content-box {
+            max-width: min(90vw, 1000px);
+            max-height: min(80vh, 700px);
+        }
+
+        .feature-list, .bullet-list {
+            gap: clamp(0.4rem, 1vh, 1rem);
+        }
+
+        .feature-list li, .bullet-list li {
+            font-size: var(--body-size);
+            line-height: 1.4;
+        }
+
+        img, .image-container {
+            max-width: 100%;
+            max-height: min(50vh, 400px);
+            object-fit: contain;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+            }
+        }
+
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+
+            .nav-dots, .keyboard-hint, .decorative {
+                display: none;
+            }
+        }
+
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+            }
+        }
+
+        @media (max-width: 600px) {
+            :root {
+                --title-size: clamp(1.25rem, 7vw, 2.5rem);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* ===========================================
+           GLOBAL RESETS & BASE
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--navy);
+            color: var(--off-white);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===========================================
+           STRUCTURAL GRID BACKGROUND
+           Subtle authority lines — no decorative noise
+           =========================================== */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(203, 213, 225, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(203, 213, 225, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .grid-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 15% 85%, rgba(13, 148, 136, 0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 15%, rgba(15, 31, 61, 0.8) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ===========================================
+           ANIMATIONS — staggered slide-in reveals
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity var(--dur-norm) var(--ease-expo),
+                        transform var(--dur-norm) var(--ease-expo);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity var(--dur-norm) var(--ease-expo),
+                        transform var(--dur-norm) var(--ease-expo);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.92);
+            transition: opacity var(--dur-slow) var(--ease-expo),
+                        transform var(--dur-slow) var(--ease-expo);
+        }
+
+        .slide.visible .reveal,
+        .slide.visible .reveal-left,
+        .slide.visible .reveal-scale {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Stagger delays */
+        .delay-1 { transition-delay: 0.08s; }
+        .delay-2 { transition-delay: 0.18s; }
+        .delay-3 { transition-delay: 0.28s; }
+        .delay-4 { transition-delay: 0.38s; }
+        .delay-5 { transition-delay: 0.48s; }
+        .delay-6 { transition-delay: 0.56s; }
+        .delay-7 { transition-delay: 0.64s; }
+
+        /* ===========================================
+           SHARED COMPONENTS
+           =========================================== */
+
+        /* Teal horizontal accent rule */
+        .teal-rule {
+            width: clamp(32px, 5vw, 56px);
+            height: 3px;
+            background: var(--teal);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Eyebrow label */
+        .eyebrow {
+            font-family: var(--font-body);
+            font-size: var(--label-size);
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--teal);
+        }
+
+        /* Damina wordmark — bottom right, every slide */
+        .wordmark {
+            position: absolute;
+            bottom: clamp(1rem, 2.5vh, 2rem);
+            right: clamp(1rem, 2.5vw, 2.5rem);
+            font-family: var(--font-display);
+            font-size: var(--label-size);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: rgba(248, 247, 244, 0.3);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Slide number — top right */
+        .slide-num {
+            position: absolute;
+            top: clamp(1rem, 2.5vh, 2rem);
+            right: clamp(1rem, 2.5vw, 2.5rem);
+            font-family: var(--font-body);
+            font-size: var(--label-size);
+            font-weight: 500;
+            color: rgba(203, 213, 225, 0.4);
+            letter-spacing: 0.08em;
+            z-index: 10;
+        }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--teal);
+            z-index: 1000;
+            width: 0%;
+            transition: width 0.3s var(--ease-expo);
+        }
+
+        /* ===========================================
+           NAV DOTS — vertical right rail
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(0.75rem, 2vw, 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1vh, 10px);
+            z-index: 100;
+            list-style: none;
+        }
+
+        .nav-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(203, 213, 225, 0.3);
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--teal);
+            transform: scale(1.5);
+        }
+
+        /* ===========================================
+           SLIDE 1 — TITLE
+           Full-bleed navy, large Sora headline
+           =========================================== */
+        .slide-title {
+            background: var(--navy-deep);
+        }
+
+        .slide-title .grid-bg-title {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(203, 213, 225, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(203, 213, 225, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .slide-title .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        .slide-title .glow-orb-1 {
+            width: min(45vw, 500px);
+            height: min(45vw, 500px);
+            background: rgba(13, 148, 136, 0.14);
+            bottom: -10%;
+            left: -5%;
+        }
+
+        .slide-title .glow-orb-2 {
+            width: min(30vw, 350px);
+            height: min(30vw, 350px);
+            background: rgba(22, 45, 82, 0.6);
+            top: 0;
+            right: 0;
+        }
+
+        .slide-title .title-content {
+            position: relative;
+            z-index: 2;
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            gap: var(--element-gap);
+        }
+
+        .slide-title h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 6.5vw, 5rem);
+            font-weight: 700;
+            line-height: 1.08;
+            color: var(--off-white);
+            max-width: 14ch;
+        }
+
+        .slide-title h1 .accent-word {
+            color: var(--teal);
+        }
+
+        .slide-title .subtitle {
+            font-family: var(--font-body);
+            font-size: clamp(0.85rem, 1.8vw, 1.25rem);
+            font-weight: 400;
+            color: var(--light-slate);
+            max-width: 52ch;
+            line-height: 1.6;
+            margin-top: clamp(0.5rem, 1.5vh, 1.25rem);
+        }
+
+        .slide-title .tagline-row {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+            margin-top: clamp(1rem, 3vh, 2.5rem);
+        }
+
+        .slide-title .tagline {
+            font-family: var(--font-body);
+            font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--teal);
+        }
+
+        /* ===========================================
+           SLIDE 2 — THE PROBLEM
+           Section divider style: full navy, white headline
+           =========================================== */
+        .slide-problem {
+            background: var(--navy);
+        }
+
+        .slide-problem .problem-layout {
+            position: relative;
+            z-index: 2;
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            gap: var(--content-gap);
+        }
+
+        .slide-problem h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 700;
+            color: var(--off-white);
+            line-height: 1.2;
+            max-width: 22ch;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: clamp(0.75rem, 2vw, 2rem);
+            margin-top: clamp(0.5rem, 1.5vh, 1rem);
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: min(140px, 40vw);
+            background: rgba(248, 247, 244, 0.04);
+            border: 1px solid rgba(203, 213, 225, 0.1);
+            border-left: 3px solid var(--teal);
+            border-radius: 4px;
+            padding: clamp(0.75rem, 2vw, 1.5rem);
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.25rem, 0.5vh, 0.5rem);
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--teal);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: var(--small-size);
+            color: var(--light-slate);
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        /* ===========================================
+           SLIDE 3 — FLYWHEEL OVERVIEW
+           =========================================== */
+        .slide-flywheel {
+            background: var(--navy-deep);
+        }
+
+        /* ===========================================
+           FLYWHEEL SLIDE — two-column layout
+           Left: header + insight text
+           Right: SVG circular process diagram
+           =========================================== */
+        .flywheel-layout {
+            position: relative;
+            z-index: 2;
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 100%;
+            gap: clamp(1.5rem, 4vw, 4rem);
+        }
+
+        /* Left column — heading + insight callout */
+        .flywheel-text {
+            flex: 0 0 auto;
+            width: min(38%, 340px);
+            display: flex;
+            flex-direction: column;
+            gap: var(--element-gap);
+        }
+
+        .flywheel-text h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 700;
+            color: var(--off-white);
+            line-height: 1.2;
+        }
+
+        .flywheel-insight {
+            margin-top: clamp(0.5rem, 1.5vh, 1.25rem);
+            padding: clamp(0.75rem, 1.5vw, 1.25rem) clamp(1rem, 2vw, 1.75rem);
+            background: var(--teal-dim);
+            border-left: 3px solid var(--teal);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .flywheel-insight p {
+            font-size: var(--small-size);
+            color: var(--off-white);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .flywheel-insight strong {
+            color: var(--teal);
+            font-style: normal;
+        }
+
+        /* Right column — circular diagram container */
+        .flywheel-diagram {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            height: 100%;
+        }
+
+        .flywheel-diagram svg {
+            width: min(100%, min(70vh, 520px));
+            height: min(100%, min(70vh, 520px));
+            overflow: visible;
+        }
+
+        /* SVG node circles — animation via JS adding .fw-visible class to svg */
+        .fw-node-ring {
+            fill: none;
+            stroke: rgba(13,148,136,0.18);
+            stroke-width: 1.5;
+        }
+
+        .fw-arc-path {
+            fill: none;
+            stroke: var(--teal);
+            stroke-width: 2;
+            stroke-linecap: round;
+            opacity: 0.7;
+        }
+
+        /* Dashed spinning ring */
+        .fw-spin-ring {
+            fill: none;
+            stroke: rgba(13,148,136,0.2);
+            stroke-width: 1;
+            stroke-dasharray: 8 14;
+            animation: fw-spin 18s linear infinite;
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes fw-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Node pill backgrounds */
+        .fw-node-bg {
+            fill: var(--navy-deep);
+            stroke: var(--teal);
+            stroke-width: 1.5;
+            rx: 6;
+        }
+
+        .fw-node-bg-active {
+            fill: rgba(13,148,136,0.15);
+            stroke: var(--teal);
+            stroke-width: 2;
+        }
+
+        /* Centre label */
+        .fw-center-label {
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+
+        /* Arrow stroke draw animation — fires when .fw-drawn added to svg */
+        .fw-arrow {
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            transition: stroke-dashoffset 0.6s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        svg.fw-drawn .fw-arrow {
+            stroke-dashoffset: 0;
+        }
+
+        /* Node pop-in */
+        .fw-node-group {
+            opacity: 0;
+            transform-origin: var(--ox, 50%) var(--oy, 50%);
+            transform: scale(0.5);
+            transition: opacity 0.45s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.45s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        svg.fw-drawn .fw-node-group {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        svg.fw-drawn .fw-node-group:nth-child(1) { transition-delay: 0.05s; }
+        svg.fw-drawn .fw-node-group:nth-child(2) { transition-delay: 0.15s; }
+        svg.fw-drawn .fw-node-group:nth-child(3) { transition-delay: 0.25s; }
+        svg.fw-drawn .fw-node-group:nth-child(4) { transition-delay: 0.35s; }
+        svg.fw-drawn .fw-node-group:nth-child(5) { transition-delay: 0.45s; }
+
+        @media (max-width: 680px) {
+            .flywheel-layout {
+                flex-direction: column;
+                gap: var(--element-gap);
+            }
+
+            .flywheel-text {
+                width: 100%;
+            }
+
+            .flywheel-diagram {
+                height: min(45vh, 320px);
+                width: 100%;
+            }
+        }
+
+        /* ===========================================
+           PILLAR SLIDES — 3-node arc left, content right
+           =========================================== */
+        .slide-pillar {
+            background: var(--navy);
+        }
+
+        .pillar-layout {
+            position: relative;
+            z-index: 2;
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 100%;
+            gap: clamp(1rem, 3vw, 3rem);
+        }
+
+        /* LEFT: spacer column — the actual flywheel is fixed-positioned */
+        .pillar-wheel-col {
+            flex: 0 0 auto;
+            width: 44%;
+            height: 100%;
+        }
+
+        /* ===========================================
+           PERSISTENT FIXED FLYWHEEL
+           Overlays the left 44% of viewport
+           while any pillar slide is active.
+           =========================================== */
+        #pillar-flywheel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 44%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #pillar-flywheel.fw-visible { opacity: 1; }
+
+        #pillar-flywheel svg {
+            width: 92%;
+            height: 92%;
+            overflow: visible;
+        }
+
+        /*
+          3-NODE FIXED LAYOUT
+          ─────────────────────────────────────────────
+          viewBox: 0 0 500 500  |  centre: 250,250
+          Ring radius: 155
+
+          Fixed positions:
+            12 o'clock (250,  95) — previous pillar, dim
+             3 o'clock (405, 250) — CURRENT pillar, lit
+             6 o'clock (250, 405) — next pillar, dim
+
+          Morphing: JS transitions fill + text between states.
+        */
+
+        /* ── Persistent flywheel node styles ── */
+
+        /* All circles: smooth fill/stroke transitions for morph */
+        .pn-circle {
+            transition: fill 0.45s ease, stroke 0.45s ease, r 0.45s ease;
+        }
+        /* Text labels: fade through opacity */
+        .pn-label-group {
+            transition: opacity 0.35s ease;
+        }
+
+        /* Active halo */
+        .pn-halo {
+            fill: rgba(13, 148, 136, 0.12);
+            stroke: rgba(13, 148, 136, 0.55);
+            stroke-width: 1;
+            transition: opacity 0.45s ease, cx 0.45s ease, cy 0.45s ease;
+        }
+
+        /* Arc draw-in — triggered by adding .fw-drawn to the SVG */
+        .pn-arc {
+            fill: none;
+            stroke: rgba(13, 148, 136, 0.4);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 650;
+            stroke-dashoffset: 650;
+            transition: stroke-dashoffset 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #pillar-flywheel.fw-drawn .pn-arc { stroke-dashoffset: 0; }
+
+        /* Initial pop-in for the whole flywheel */
+        .pn-node-g {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #pillar-flywheel.fw-drawn .pn-node-g { opacity: 1; }
+
+        /* RIGHT: explanation */
+        .pillar-content-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.6rem, 1.5vh, 1.25rem);
+            overflow: hidden;
+        }
+
+        .pillar-content-col h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.1rem, 2.5vw, 2rem);
+            font-weight: 700;
+            color: var(--off-white);
+            line-height: 1.2;
+        }
+
+        .pillar-divider {
+            width: 1px;
+            align-self: stretch;
+            background: rgba(13, 148, 136, 0.2);
+            flex-shrink: 0;
+        }
+
+        .pillar-section-label {
+            font-size: var(--label-size);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: clamp(0.15rem, 0.4vh, 0.3rem);
+        }
+
+        .pillar-text {
+            font-size: var(--body-size);
+            color: var(--light-slate);
+            line-height: 1.6;
+        }
+
+        .pillar-roi-box {
+            background: rgba(13, 148, 136, 0.1);
+            border: 1px solid rgba(13, 148, 136, 0.25);
+            border-radius: 4px;
+            padding: clamp(0.65rem, 1.2vw, 1.1rem);
+        }
+
+        .pillar-roi-box .roi-text {
+            font-size: var(--body-size);
+            color: var(--off-white);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 700px) {
+            .pillar-layout {
+                flex-direction: column;
+            }
+            .pillar-wheel-col {
+                width: 100%;
+                height: 36vh;
+                flex-shrink: 0;
+            }
+            #pillar-flywheel {
+                width: 100%;
+                height: 36vh;
+                top: 0;
+                position: absolute;
+            }
+            .pillar-divider { display: none; }
+        }
+
+        /* ===========================================
+           SLIDE 9 — CLOSING / CTA
+           =========================================== */
+        .slide-close {
+            background: var(--navy-deep);
+        }
+
+        .close-layout {
+            position: relative;
+            z-index: 2;
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            gap: var(--content-gap);
+        }
+
+        .close-layout h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.6rem, 4.5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--off-white);
+            line-height: 1.15;
+            max-width: 20ch;
+        }
+
+        .close-layout h2 em {
+            color: var(--teal);
+            font-style: normal;
+        }
+
+        .close-body {
+            font-size: var(--body-size);
+            color: var(--light-slate);
+            line-height: 1.7;
+            max-width: 55ch;
+        }
+
+        .cta-block {
+            margin-top: clamp(0.75rem, 2vh, 1.5rem);
+            display: flex;
+            align-items: center;
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+            flex-wrap: wrap;
+        }
+
+        .cta-primary {
+            display: inline-block;
+            padding: clamp(0.6rem, 1.2vw, 1rem) clamp(1.25rem, 3vw, 2.5rem);
+            background: var(--teal);
+            color: var(--pure-white);
+            font-family: var(--font-body);
+            font-size: clamp(0.75rem, 1.2vw, 1rem);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .cta-primary:hover {
+            background: #0b7c71;
+            transform: translateY(-1px);
+        }
+
+        .cta-note {
+            font-size: var(--small-size);
+            color: var(--slate);
+        }
+        .cta-contact {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--small-size);
+            color: var(--teal);
+            opacity: 0.8;
+            letter-spacing: 0.02em;
+        }
+
+        /* ===========================================
+           INLINE EDITING SYSTEM
+           User opted in — JS controlled
+           =========================================== */
+        .edit-hotzone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 80px;
+            z-index: 10000;
+            cursor: pointer;
+        }
+
+        .edit-toggle {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            width: 36px;
+            height: 36px;
+            background: var(--teal);
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 10001;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-toggle.show,
+        .edit-toggle.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .edit-toggle.active {
+            background: var(--amber);
+            transform: scale(1.1);
+        }
+
+        /* Edit mode visual cue */
+        body.edit-mode [contenteditable="true"] {
+            outline: 1px dashed rgba(13, 148, 136, 0.5);
+            border-radius: 2px;
+            cursor: text;
+        }
+
+        body.edit-mode [contenteditable="true"]:focus {
+            outline: 2px solid var(--teal);
+            background: rgba(13, 148, 136, 0.06);
+        }
+
+        .edit-mode-banner {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--amber);
+            color: var(--navy-deep);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .edit-mode-banner.visible {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Nav dots -->
+    <nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+
+    <!-- Edit mode UI -->
+    <div class="edit-hotzone" id="editHotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+    <div class="edit-mode-banner" id="editBanner">EDIT MODE — Click any text to edit · Ctrl+S to save</div>
+
+
+    <!-- =============================================
+         PERSISTENT PILLAR FLYWHEEL
+         Fixed overlay covering left 44% of viewport.
+         JS morphs node labels/colours between pillars.
+         ============================================= -->
+    <div id="pillar-flywheel" aria-hidden="true">
+        <svg viewBox="0 0 500 500">
+            <defs>
+                <filter id="fw-glow" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="10" result="b"/>
+                    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <radialGradient id="fw-cg" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#162d52"/>
+                    <stop offset="100%" stop-color="#0a1628"/>
+                </radialGradient>
+                <marker id="fw-arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                    <polygon points="0 0,7 3.5,0 7" fill="#0D9488" opacity="0.8"/>
+                </marker>
+            </defs>
+
+            <!-- Faint full ring context -->
+            <circle cx="250" cy="250" r="155" fill="none" stroke="rgba(203,213,225,0.06)" stroke-width="1.5"/>
+
+            <!-- Arc: 12→3→6 clockwise, draw-in on first show -->
+            <path class="pn-arc" id="fw-arc"
+                  d="M 250,95 A 155 155 0 0 1 405,250 A 155 155 0 0 1 250,405"
+                  marker-mid="url(#fw-arr)"/>
+
+            <!-- Active halo at 3 o'clock -->
+            <circle id="fw-halo" class="pn-halo" cx="405" cy="250" r="74" filter="url(#fw-glow)"/>
+
+            <!-- 12 o'clock node: PREVIOUS pillar -->
+            <g id="fw-node-12" class="pn-node-g">
+                <circle id="fw-c12" class="pn-circle" cx="250" cy="95" r="46"
+                        fill="#0a1628" stroke="rgba(13,148,136,0.3)" stroke-width="1.5"/>
+                <g id="fw-labels-12" class="pn-label-group">
+                    <text id="fw-num12" x="250" y="88" text-anchor="middle"
+                          font-family="'Sora',sans-serif" font-size="16" font-weight="700"
+                          fill="rgba(13,148,136,0.5)">01</text>
+                    <text id="fw-lab12a" x="250" y="101" text-anchor="middle"
+                          font-family="'Inter',sans-serif" font-size="10.5" font-weight="500"
+                          fill="rgba(203,213,225,0.5)">Database</text>
+                    <text id="fw-lab12b" x="250" y="114" text-anchor="middle"
+                          font-family="'Inter',sans-serif" font-size="10.5" font-weight="500"
+                          fill="rgba(203,213,225,0.5)">Reactivation</text>
+                </g>
+            </g>
+
+            <!-- 3 o'clock node: CURRENT pillar (active) -->
+            <g id="fw-node-3" class="pn-node-g">
+                <circle id="fw-c3" class="pn-circle" cx="405" cy="250" r="58"
+                        fill="#0D9488" stroke="#5eead4" stroke-width="3"/>
+                <g id="fw-labels-3" class="pn-label-group">
+                    <text id="fw-num3" x="405" y="240" text-anchor="middle"
+                          font-family="'Sora',sans-serif" font-size="22" font-weight="700"
+                          fill="#F8F7F4">01</text>
+                    <text id="fw-lab3a" x="405" y="257" text-anchor="middle"
+                          font-family="'Inter',sans-serif" font-size="11" font-weight="600"
+                          fill="#F8F7F4">Database</text>
+                    <text id="fw-lab3b" x="405" y="271" text-anchor="middle"
+                          font-family="'Inter',sans-serif" font-size="11" font-weight="600"
+                          fill="#F8F7F4">Reactivation</text>
+                </g>
+            </g>
+
+            <!-- 6 o'clock node: NEXT pillar -->
+            <g id="fw-node-6" class="pn-node-g">
+                <circle id="fw-c6" class="pn-circle" cx="250" cy="405" r="46"
+                        fill="#0a1628" stroke="rgba(13,148,136,0.3)" stroke-width="1.5"/>
+                <g id="fw-labels-6" class="pn-label-group">
+                    <text id="fw-num6" x="250" y="399" text-anchor="middle"
+                          font-family="'Sora',sans-serif" font-size="16" font-weight="700"
+                          fill="rgba(13,148,136,0.5)">02</text>
+                    <text id="fw-lab6a" x="250" y="412" text-anchor="middle"
+                          font-family="'Inter',sans-serif" font-size="10.5" font-weight="500"
+                          fill="rgba(203,213,225,0.5)">Reviews &amp;</text>
+                    <text id="fw-lab6b" x="250" y="425" text-anchor="middle"
+                          font-family="'Inter',sans-serif" font-size="10.5" font-weight="500"
+                          fill="rgba(203,213,225,0.5)">Referrals</text>
+                </g>
+            </g>
+
+            <!-- Centre label -->
+            <circle cx="250" cy="250" r="62" fill="url(#fw-cg)" stroke="rgba(13,148,136,0.25)" stroke-width="1.5"/>
+            <text x="250" y="245" text-anchor="middle" font-family="'Sora',sans-serif"
+                  font-size="12" font-weight="700" fill="#F8F7F4">AI Growth</text>
+            <text x="250" y="261" text-anchor="middle" font-family="'Sora',sans-serif"
+                  font-size="12" font-weight="700" fill="#0D9488">Flywheel</text>
+        </svg>
+    </div>
+
+
+    <!-- =============================================
+         SLIDE 1 — TITLE
+         ============================================= -->
+    <section class="slide slide-title" id="slide-1" aria-label="Title slide">
+        <div class="grid-bg-title"></div>
+        <div class="glow-orb glow-orb-1"></div>
+        <div class="glow-orb glow-orb-2"></div>
+
+        <div class="title-content">
+            <span class="eyebrow reveal delay-1">Damina &mdash; AI Services</span>
+            <div class="teal-rule reveal delay-2" style="margin-top: clamp(0.5rem, 1vh, 1rem);"></div>
+            <h1 class="reveal delay-3">
+                The AI Growth<br>
+                <span class="accent-word">Flywheel</span>
+            </h1>
+            <p class="subtitle reveal delay-4">
+                A self-funding system that generates revenue before you spend a dollar on ads — then compounds with every cycle.
+            </p>
+            <div class="tagline-row reveal delay-5">
+                <div class="teal-rule" style="width: 24px;"></div>
+                <span class="tagline">From AI strategy to measurable results.</span>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 2 — THE PROBLEM
+         ============================================= -->
+    <section class="slide slide-problem grid-bg" id="slide-2" aria-label="The problem">
+        <span class="slide-num">02</span>
+
+        <div class="problem-layout">
+            <span class="eyebrow reveal delay-1">The Reality</span>
+            <div class="teal-rule reveal delay-2"></div>
+            <h2 class="reveal delay-3">
+                Most businesses are bleeding leads every day — and don't know it.
+            </h2>
+
+            <div class="stat-row">
+                <div class="stat-card reveal-scale delay-3">
+                    <div class="stat-number">62%</div>
+                    <div class="stat-label">of calls to small businesses go unanswered every day</div>
+                </div>
+                <div class="stat-card reveal-scale delay-4">
+                    <div class="stat-number">400%</div>
+                    <div class="stat-label">conversion drop if you don't contact a lead within 5 minutes</div>
+                </div>
+                <div class="stat-card reveal-scale delay-5">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">of customers read reviews before choosing a local business</div>
+                </div>
+                <div class="stat-card reveal-scale delay-6">
+                    <div class="stat-number">70%</div>
+                    <div class="stat-label">of salespeople have never received formal training</div>
+                </div>
+            </div>
+
+            <p class="reveal delay-7" style="font-size: var(--small-size); color: var(--slate); max-width: 60ch; margin-top: clamp(0.25rem, 1vh, 0.75rem);">
+                The problem is almost never the technology. It's the gaps that exist before, during, and after the sale.
+            </p>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 3 — FLYWHEEL OVERVIEW
+         ============================================= -->
+    <section class="slide slide-flywheel grid-bg" id="slide-3" aria-label="The flywheel overview">
+        <span class="slide-num">03</span>
+
+        <div class="flywheel-layout">
+
+            <!-- Left: text column -->
+            <div class="flywheel-text">
+                <span class="eyebrow reveal delay-1">The System</span>
+                <div class="teal-rule reveal delay-1"></div>
+                <h2 class="reveal delay-2">Five pillars. One compounding loop.</h2>
+
+                <div class="flywheel-insight reveal delay-3">
+                    <p>
+                        <strong>The core insight:</strong> The loop generates money before you spend a dollar on ads. Reactivation cash funds the ads. The ads feed a system already built to convert, retain, and refer. <strong>Cheaper to run. More profitable every cycle.</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: SVG circular flywheel diagram -->
+            <div class="flywheel-diagram">
+                <!--
+                    Circular process — 5 nodes evenly distributed at 72° intervals.
+                    Start at top (−90°), going clockwise.
+                    Angles: −90, −18, 54, 126, 198  (degrees)
+                    In radians: −π/2, −π/10, 3π/10, 7π/10, 11π/10
+                    SVG viewBox 0 0 500 500, centre 250,250, ring radius 155
+                -->
+                <svg id="flywheelSvg" viewBox="0 0 500 500" aria-label="AI Growth Flywheel circular process diagram" role="img">
+                    <defs>
+                        <!-- Teal glow filter for active node -->
+                        <filter id="nodeGlow" x="-40%" y="-40%" width="180%" height="180%">
+                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <!-- Arrowhead marker -->
+                        <marker id="arrowTeal" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                            <polygon points="0 0, 7 3.5, 0 7" fill="#0D9488" opacity="0.85"/>
+                        </marker>
+                        <!-- Subtle radial gradient for centre disk -->
+                        <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%"   stop-color="#162d52"/>
+                            <stop offset="100%" stop-color="#0a1628"/>
+                        </radialGradient>
+                    </defs>
+
+                    <!-- Outer dashed spinning ring -->
+                    <circle class="fw-spin-ring" cx="250" cy="250" r="182"/>
+
+                    <!-- Static guide ring -->
+                    <circle class="fw-node-ring" cx="250" cy="250" r="155"/>
+
+                    <!--
+                        Arc arrows between consecutive nodes.
+                        Each arc sits just outside r=155, drawn as quadratic bezier
+                        anchored at each node centre, curving outward slightly.
+                        Node positions (r=155 from centre 250,250):
+                          N0 top:       250,  95   (−90°)
+                          N1 top-right: 397, 202   (−18°)
+                          N2 bot-right: 344, 383   ( 54°)
+                          N3 bot-left:  156, 383   (126°)
+                          N4 top-left:  103, 202   (198°)
+                    -->
+
+                    <!-- Arrow N0→N1 -->
+                    <path class="fw-arc-path fw-arrow"
+                          d="M 318,118 A 155 155 0 0 1 384,228"
+                          marker-end="url(#arrowTeal)" stroke-dasharray="130" stroke-dashoffset="130"/>
+                    <!-- Arrow N1→N2 -->
+                    <path class="fw-arc-path fw-arrow"
+                          d="M 402,258 A 155 155 0 0 1 364,368"
+                          marker-end="url(#arrowTeal)" stroke-dasharray="130" stroke-dashoffset="130"/>
+                    <!-- Arrow N2→N3 -->
+                    <path class="fw-arc-path fw-arrow"
+                          d="M 306,396 A 155 155 0 0 1 194,396"
+                          marker-end="url(#arrowTeal)" stroke-dasharray="130" stroke-dashoffset="130"/>
+                    <!-- Arrow N3→N4 -->
+                    <path class="fw-arc-path fw-arrow"
+                          d="M 136,368 A 155 155 0 0 1 98,258"
+                          marker-end="url(#arrowTeal)" stroke-dasharray="130" stroke-dashoffset="130"/>
+                    <!-- Arrow N4→N0 (closes loop) -->
+                    <path class="fw-arc-path fw-arrow"
+                          d="M 116,228 A 155 155 0 0 1 182,118"
+                          marker-end="url(#arrowTeal)" stroke-dasharray="130" stroke-dashoffset="130"/>
+
+                    <!-- Centre disk -->
+                    <circle cx="250" cy="250" r="68" fill="url(#centerGrad)" stroke="rgba(13,148,136,0.3)" stroke-width="1.5"/>
+                    <text x="250" y="242" class="fw-center-label" font-family="'Sora',sans-serif" font-size="13" font-weight="700" fill="#F8F7F4">AI Growth</text>
+                    <text x="250" y="260" class="fw-center-label" font-family="'Sora',sans-serif" font-size="13" font-weight="700" fill="#0D9488">Flywheel</text>
+                    <text x="250" y="278" class="fw-center-label" font-family="'Inter',sans-serif" font-size="9.5" fill="rgba(203,213,225,0.55)">self-funding loop</text>
+
+                    <!--
+                        NODE GROUPS — 5 nodes.
+                        Each group: background rect + number + title text
+                        Node positions (cx, cy) on r=155 ring from 250,250:
+                          N0:  250,  95   top
+                          N1:  397, 203   upper-right
+                          N2:  344, 383   lower-right
+                          N3:  156, 383   lower-left
+                          N4:  103, 203   upper-left
+                    -->
+
+                    <!-- N0: Database Reactivation (top) -->
+                    <g class="fw-node-group" style="--ox:50%;--oy:19%;">
+                        <circle cx="250" cy="95" r="42" fill="rgba(13,148,136,0.15)" stroke="#0D9488" stroke-width="2" filter="url(#nodeGlow)"/>
+                        <text x="250" y="87" text-anchor="middle" font-family="'Sora',sans-serif" font-size="16" font-weight="700" fill="#0D9488">01</text>
+                        <text x="250" y="101" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#F8F7F4">Database</text>
+                        <text x="250" y="112" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#F8F7F4">Reactivation</text>
+                    </g>
+
+                    <!-- N1: Reviews & Referrals (upper-right) -->
+                    <g class="fw-node-group" style="--ox:79%;--oy:41%;">
+                        <circle cx="397" cy="203" r="42" fill="rgba(10,22,40,0.9)" stroke="rgba(13,148,136,0.45)" stroke-width="1.5"/>
+                        <text x="397" y="195" text-anchor="middle" font-family="'Sora',sans-serif" font-size="16" font-weight="700" fill="rgba(13,148,136,0.6)">02</text>
+                        <text x="397" y="209" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Reviews &amp;</text>
+                        <text x="397" y="220" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Referrals</text>
+                    </g>
+
+                    <!-- N2: Lead Nurturing (lower-right) -->
+                    <g class="fw-node-group" style="--ox:69%;--oy:77%;">
+                        <circle cx="344" cy="383" r="42" fill="rgba(10,22,40,0.9)" stroke="rgba(13,148,136,0.45)" stroke-width="1.5"/>
+                        <text x="344" y="375" text-anchor="middle" font-family="'Sora',sans-serif" font-size="16" font-weight="700" fill="rgba(13,148,136,0.6)">03</text>
+                        <text x="344" y="389" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Lead</text>
+                        <text x="344" y="400" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Nurturing</text>
+                    </g>
+
+                    <!-- N3: Sales Coaching (lower-left) -->
+                    <g class="fw-node-group" style="--ox:31%;--oy:77%;">
+                        <circle cx="156" cy="383" r="42" fill="rgba(10,22,40,0.9)" stroke="rgba(13,148,136,0.45)" stroke-width="1.5"/>
+                        <text x="156" y="375" text-anchor="middle" font-family="'Sora',sans-serif" font-size="16" font-weight="700" fill="rgba(13,148,136,0.6)">04</text>
+                        <text x="156" y="389" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Sales</text>
+                        <text x="156" y="400" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Coaching</text>
+                    </g>
+
+                    <!-- N4: AI Paid Ads (upper-left) -->
+                    <g class="fw-node-group" style="--ox:21%;--oy:41%;">
+                        <circle cx="103" cy="203" r="42" fill="rgba(10,22,40,0.9)" stroke="rgba(13,148,136,0.45)" stroke-width="1.5"/>
+                        <text x="103" y="195" text-anchor="middle" font-family="'Sora',sans-serif" font-size="16" font-weight="700" fill="rgba(13,148,136,0.6)">05</text>
+                        <text x="103" y="209" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">AI Paid</text>
+                        <text x="103" y="220" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" font-weight="600" fill="#CBD5E1">Ads</text>
+                    </g>
+
+                </svg>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         PILLAR SLIDES 4–8
+         Layout: 3-node arc (left) + content (right)
+
+         Fixed clock positions:
+           12 o'clock (250,  95) = previous pillar, dim
+            3 o'clock (405, 250) = CURRENT pillar, glowing
+            6 o'clock (250, 405) = next pillar, dim
+
+         Arc draws clockwise along right half of ring.
+         No JS rotation — each SVG is statically correct.
+         Animations: arc draw-in + node pop-ins on .visible
+         ============================================= -->
+
+    <!-- =============================================
+         SLIDE 4 — PILLAR 1: DATABASE REACTIVATION
+         12 o'clock: (none — start of loop, show ghost)
+          3 o'clock: 01 Database Reactivation  ← active
+          6 o'clock: 02 Reviews & Referrals
+         ============================================= -->
+    <section class="slide slide-pillar grid-bg" id="slide-4" data-pillar-index="0" aria-label="Pillar 1: Database Reactivation">
+        <span class="slide-num">04</span>
+
+        <div class="pillar-layout">
+            <!-- LEFT: 3-node arc — 12=ghost, 3=P1 active, 6=P2 -->
+            <div class="pillar-wheel-col"></div>
+
+            <div class="pillar-divider reveal delay-2"></div>
+
+            <div class="pillar-content-col">
+                <span class="eyebrow reveal delay-2">Pillar One</span>
+                <div class="teal-rule reveal delay-2"></div>
+                <h2 class="reveal delay-3">AI Database Reactivation</h2>
+                <div class="reveal delay-4">
+                    <div class="pillar-section-label">Why it works</div>
+                    <p class="pillar-text">Every business has a graveyard of leads and past customers they already paid to acquire — and never followed up with. That's money sitting on the table.</p>
+                </div>
+                <div class="pillar-roi-box reveal delay-5">
+                    <div class="pillar-section-label">The ROI</div>
+                    <p class="roi-text">Zero ad spend. A few targeted SMS messages. Appointments booked within days. The business sees revenue before the system costs them anything — which is exactly the point. <strong>It funds everything that comes next.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 5 — PILLAR 2: REVIEWS & REFERRALS
+         Rotation: 72deg CW (N1 moves to top)
+         ============================================= -->
+    <section class="slide slide-pillar grid-bg" id="slide-5" data-pillar-index="1" aria-label="Pillar 2: Reviews and Referrals">
+        <span class="slide-num">05</span>
+
+        <div class="pillar-layout">
+            <!-- LEFT: 3-node arc — 12=P1 ghost, 3=P2 active, 6=P3 dim -->
+            <div class="pillar-wheel-col"></div>
+
+            <div class="pillar-divider reveal delay-2"></div>
+
+            <div class="pillar-content-col">
+                <span class="eyebrow reveal delay-2">Pillar Two</span>
+                <div class="teal-rule reveal delay-2"></div>
+                <h2 class="reveal delay-3">AI Reviews &amp; Referrals</h2>
+                <div class="reveal delay-4">
+                    <div class="pillar-section-label">Why it works</div>
+                    <p class="pillar-text">98% of customers read reviews before choosing a local business. More reviews means higher Google ranking — more inbound leads without paying for them. Referrals close at 4× the rate of cold leads.</p>
+                </div>
+                <div class="pillar-roi-box reveal delay-5">
+                    <div class="pillar-section-label">The ROI</div>
+                    <p class="roi-text">Every new review is compounding organic traffic. Every referral is a near-free, pre-sold customer. This pillar turns happy customers into a passive acquisition channel that grows at <strong>no additional cost.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 6 — PILLAR 3: LEAD NURTURING
+         Rotation: 144deg CW (N2 moves to top)
+         ============================================= -->
+    <section class="slide slide-pillar grid-bg" id="slide-6" data-pillar-index="2" aria-label="Pillar 3: Lead Nurturing">
+        <span class="slide-num">06</span>
+
+        <div class="pillar-layout">
+            <!-- LEFT: 3-node arc — 12=P2 ghost, 3=P3 active, 6=P4 dim -->
+            <div class="pillar-wheel-col"></div>
+
+            <div class="pillar-divider reveal delay-2"></div>
+
+            <div class="pillar-content-col">
+                <span class="eyebrow reveal delay-2">Pillar Three</span>
+                <div class="teal-rule reveal delay-2"></div>
+                <h2 class="reveal delay-3">AI Lead Nurturing + Missed Call Text-Back</h2>
+                <div class="reveal delay-4">
+                    <div class="pillar-section-label">Why it works</div>
+                    <p class="pillar-text">62 out of 100 calls to small businesses go unanswered. Conversion drops 400% if a lead isn't contacted within 5 minutes. Most businesses are bleeding leads every single day — without knowing it.</p>
+                </div>
+                <div class="pillar-roi-box reveal delay-5">
+                    <div class="pillar-section-label">The ROI</div>
+                    <p class="roi-text">More leads booked. More appointments that show. The marketing budget already spent <strong>works harder</strong> — because leads stop falling through the cracks.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 7 — PILLAR 4: SALES COACHING
+         Rotation: 216deg CW (N3 moves to top)
+         ============================================= -->
+    <section class="slide slide-pillar grid-bg" id="slide-7" data-pillar-index="3" aria-label="Pillar 4: Sales Coaching">
+        <span class="slide-num">07</span>
+
+        <div class="pillar-layout">
+            <!-- LEFT: 3-node arc — 12=P3 ghost, 3=P4 active, 6=P5 dim -->
+            <div class="pillar-wheel-col"></div>
+
+            <div class="pillar-divider reveal delay-2"></div>
+
+            <div class="pillar-content-col">
+                <span class="eyebrow reveal delay-2">Pillar Four</span>
+                <div class="teal-rule reveal delay-2"></div>
+                <h2 class="reveal delay-3">AI Sales Grader + Role Play Coach</h2>
+                <div class="reveal delay-4">
+                    <div class="pillar-section-label">Why it works</div>
+                    <p class="pillar-text">It doesn't matter how many leads you generate if the sales process is broken. 70% of salespeople have never received formal training. Most owners have no way to know if their closer is actually closing.</p>
+                </div>
+                <div class="pillar-roi-box reveal delay-5">
+                    <div class="pillar-section-label">The ROI</div>
+                    <p class="roi-text">Higher close rates on every lead that walks in. Owners can identify underperforming staff fast — and fix it or move on. <strong>Better sales process means the same ad spend produces more revenue.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 8 — PILLAR 5: AI PAID ADS
+         Rotation: 288deg CW (N4 moves to top)
+         ============================================= -->
+    <section class="slide slide-pillar grid-bg" id="slide-8" data-pillar-index="4" aria-label="Pillar 5: AI Paid Ads">
+        <span class="slide-num">08</span>
+
+        <div class="pillar-layout">
+            <!-- LEFT: 3-node arc — 12=P4 ghost, 3=P5 active, 6=P1 dim (loop wraps) -->
+            <div class="pillar-wheel-col"></div>
+
+            <div class="pillar-divider reveal delay-2"></div>
+
+            <div class="pillar-content-col">
+                <span class="eyebrow reveal delay-2">Pillar Five</span>
+                <div class="teal-rule reveal delay-2"></div>
+                <h2 class="reveal delay-3">AI Paid Ads with AI Nurturing</h2>
+                <div class="reveal delay-4">
+                    <div class="pillar-section-label">Why it works</div>
+                    <p class="pillar-text">Once the system is in place, ads become the accelerator. Every lead gets nurtured instantly, booked automatically, and followed up without staff intervention.</p>
+                </div>
+                <div class="pillar-roi-box reveal delay-5">
+                    <div class="pillar-section-label">The ROI</div>
+                    <p class="roi-text">The highest-leverage use of ad spend possible — because every other pillar is already working behind the scenes to convert, retain, and refer. <strong>The loop accelerates.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <!-- =============================================
+         SLIDE 9 — CLOSING / CTA
+         ============================================= -->
+    <section class="slide slide-close grid-bg" id="slide-9" aria-label="Closing">
+        <span class="slide-num">09</span>
+
+        <div class="close-layout">
+            <span class="eyebrow reveal delay-1">The Result</span>
+            <div class="teal-rule reveal delay-2"></div>
+
+            <h2 class="reveal delay-3">
+                The loop generates the money <em>first.</em>
+            </h2>
+
+            <p class="close-body reveal delay-4">
+                Reactivation produces immediate revenue from assets you already own. That revenue funds the ads. AI captures every lead. The sales team closes more. Reviews lower your cost of acquisition. Every cycle compounds.
+            </p>
+
+            <p class="close-body reveal delay-5" style="color: var(--off-white); font-weight: 500; margin-top: clamp(0.25rem, 0.75vh, 0.5rem);">
+                The system doesn't just pay for itself — it gets cheaper to run and more profitable with every cycle.
+            </p>
+
+            <div class="cta-block reveal delay-6">
+                <a href="https://link.damina.co/widget/booking/eSvMtFd53TogrTsLODkA" target="_blank" rel="noopener" class="cta-primary">Book a call →</a>
+                <span class="cta-note">No pitch deck. No vendor promises. Just a straight conversation about where AI creates real leverage in your business.</span>
+                <span class="cta-contact">afoglietta@damina.co</span>
+            </div>
+        </div>
+
+        <div class="wordmark">DAMINA</div>
+    </section>
+
+
+    <script>
+        /* ===========================================
+           SLIDE PRESENTATION CONTROLLER
+           Handles: keyboard nav, scroll, touch,
+           intersection observer, progress bar,
+           nav dots, inline editing
+           =========================================== */
+
+        class SlidePresentation {
+            constructor() {
+                this.slides = Array.from(document.querySelectorAll('.slide'));
+                this.totalSlides = this.slides.length;
+                this.currentIndex = 0;
+                this.isScrolling = false;
+
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupScrollProgress();
+                this.setupNavDots();
+                this.updateProgress();
+            }
+
+            /* --- Intersection Observer ---
+               Adds .visible to trigger CSS animations when slide enters viewport */
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const idx = this.slides.indexOf(entry.target);
+                            this.currentIndex = idx;
+                            this.updateProgress();
+                            this.updateNavDots();
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            /* --- Keyboard Navigation ---
+               Arrow keys, Space, Page Up/Down */
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    // Skip if in edit mode and typing
+                    if (document.activeElement && document.activeElement.getAttribute('contenteditable')) return;
+
+                    const down = ['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code);
+                    const up   = ['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code);
+
+                    if (down) { e.preventDefault(); this.navigate(1); }
+                    if (up)   { e.preventDefault(); this.navigate(-1); }
+                });
+            }
+
+            /* --- Touch/Swipe Navigation --- */
+            setupTouchNav() {
+                let startY = 0;
+                let startX = 0;
+
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    startX = e.touches[0].clientX;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    const dy = startY - e.changedTouches[0].clientY;
+                    const dx = startX - e.changedTouches[0].clientX;
+                    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 50) {
+                        this.navigate(dy > 0 ? 1 : -1);
+                    }
+                }, { passive: true });
+            }
+
+            /* --- Scroll Progress Bar --- */
+            setupScrollProgress() {
+                window.addEventListener('scroll', () => {
+                    this.updateProgress();
+                }, { passive: true });
+            }
+
+            updateProgress() {
+                const pct = this.totalSlides > 1
+                    ? (this.currentIndex / (this.totalSlides - 1)) * 100
+                    : 100;
+                document.getElementById('progressBar').style.width = pct + '%';
+            }
+
+            /* --- Nav Dots --- */
+            setupNavDots() {
+                const nav = document.getElementById('navDots');
+                this.slides.forEach((slide, i) => {
+                    const dot = document.createElement('li');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    nav.appendChild(dot);
+                });
+            }
+
+            updateNavDots() {
+                const dots = document.querySelectorAll('.nav-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === this.currentIndex);
+                });
+            }
+
+            /* --- Navigate --- */
+            navigate(dir) {
+                const next = this.currentIndex + dir;
+                if (next >= 0 && next < this.totalSlides) {
+                    this.goToSlide(next);
+                }
+            }
+
+            goToSlide(index) {
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                this.currentIndex = index;
+                this.updateProgress();
+                this.updateNavDots();
+            }
+        }
+
+
+        /* ===========================================
+           INLINE EDITOR
+           User opted in during setup
+           =========================================== */
+        class InlineEditor {
+            constructor() {
+                this.isActive = false;
+                this.editables = [];
+                this.setupHotzone();
+            }
+
+            /* Make all text content editable when in edit mode */
+            toggleEditMode() {
+                this.isActive = !this.isActive;
+                const toggle = document.getElementById('editToggle');
+                const banner = document.getElementById('editBanner');
+
+                if (this.isActive) {
+                    // Find and make editable
+                    this.editables = Array.from(document.querySelectorAll(
+                        'h1, h2, p, .eyebrow, .tagline, .stage-title, .stage-desc, ' +
+                        '.pillar-section-label, .stat-number, .stat-label, .roi-text, ' +
+                        '.pillar-text, .close-body, .cta-note'
+                    ));
+                    this.editables.forEach(el => {
+                        el.setAttribute('contenteditable', 'true');
+                        el.setAttribute('spellcheck', 'true');
+                    });
+                    document.body.classList.add('edit-mode');
+                    toggle.classList.add('active');
+                    banner.classList.add('visible');
+                } else {
+                    this.editables.forEach(el => el.removeAttribute('contenteditable'));
+                    document.body.classList.remove('edit-mode');
+                    toggle.classList.remove('active');
+                    banner.classList.remove('visible');
+                    this.saveToStorage();
+                }
+            }
+
+            /* Hotzone hover with 400ms grace period (per html-template.md spec) */
+            setupHotzone() {
+                const hotzone = document.getElementById('editHotzone');
+                const toggle  = document.getElementById('editToggle');
+                let hideTimeout = null;
+
+                hotzone.addEventListener('mouseenter', () => {
+                    clearTimeout(hideTimeout);
+                    toggle.classList.add('show');
+                });
+                hotzone.addEventListener('mouseleave', () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isActive) toggle.classList.remove('show');
+                    }, 400);
+                });
+                hotzone.addEventListener('click', () => this.toggleEditMode());
+
+                toggle.addEventListener('click', () => this.toggleEditMode());
+                toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+                toggle.addEventListener('mouseleave', () => {
+                    hideTimeout = setTimeout(() => {
+                        if (!this.isActive) toggle.classList.remove('show');
+                    }, 400);
+                });
+
+                // E key shortcut
+                document.addEventListener('keydown', (e) => {
+                    if ((e.key === 'e' || e.key === 'E') &&
+                        !e.target.getAttribute('contenteditable')) {
+                        this.toggleEditMode();
+                    }
+                });
+
+                // Ctrl+S to save
+                document.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                        e.preventDefault();
+                        this.exportFile();
+                    }
+                });
+            }
+
+            saveToStorage() {
+                try {
+                    localStorage.setItem('damina-flywheel-html', document.documentElement.outerHTML);
+                } catch(e) {
+                    // localStorage may be unavailable
+                }
+            }
+
+            exportFile() {
+                const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+                const url  = URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                a.href     = url;
+                a.download = 'ai-growth-flywheel.html';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+
+        /* ===========================================
+           COUNTER ANIMATION
+           Animates stat numbers when slide becomes visible
+           =========================================== */
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            counters.forEach(counter => {
+                const target = parseFloat(counter.textContent);
+                if (isNaN(target)) return;
+
+                const suffix = counter.textContent.replace(/[\d.]/g, '');
+                let start = null;
+                const duration = 1200;
+
+                const step = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    const eased   = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                    const current = Math.round(eased * target);
+                    counter.textContent = current + suffix;
+                    if (progress < 1) requestAnimationFrame(step);
+                };
+
+                // Observe the stat card parent for visibility
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            requestAnimationFrame(step);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.7 });
+
+                observer.observe(counter.closest('.stat-card') || counter);
+            });
+        }
+
+
+        /* ===========================================
+           INIT
+           =========================================== */
+        /* ===========================================
+           FLYWHEEL OVERVIEW SVG ANIMATION TRIGGER
+           Adds .fw-drawn class when slide 3 enters
+           viewport, firing the node pop-ins and
+           arc draw transitions.
+           =========================================== */
+        function setupFlywheelAnimation() {
+            const svg    = document.getElementById('flywheelSvg');
+            const slide3 = document.getElementById('slide-3');
+            if (!svg || !slide3) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => svg.classList.add('fw-drawn'), 300);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(slide3);
+        }
+
+        /* ===========================================
+           PERSISTENT PILLAR FLYWHEEL MORPH
+           One shared fixed SVG. When a pillar slide
+           enters the viewport, JS updates node labels
+           and cross-fades fill colours — no re-draw,
+           no page jump, smooth morph between states.
+           =========================================== */
+        function setupPersistentFlywheel() {
+            const fw       = document.getElementById('pillar-flywheel');
+            const fwSvg    = fw.querySelector('svg');
+
+            // Node data per pillar index
+            // [num, line1, line2]  — line2 is '' if single-line label
+            const PILLARS = [
+                ['01', 'Database',  'Reactivation'],
+                ['02', 'Reviews &', 'Referrals'   ],
+                ['03', 'Lead',      'Nurturing'    ],
+                ['04', 'Sales',     'Coaching'     ],
+                ['05', 'AI Paid',   'Ads'          ],
+            ];
+
+            // DOM refs
+            const num12  = document.getElementById('fw-num12');
+            const lab12a = document.getElementById('fw-lab12a');
+            const lab12b = document.getElementById('fw-lab12b');
+            const num3   = document.getElementById('fw-num3');
+            const lab3a  = document.getElementById('fw-lab3a');
+            const lab3b  = document.getElementById('fw-lab3b');
+            const num6   = document.getElementById('fw-num6');
+            const lab6a  = document.getElementById('fw-lab6a');
+            const lab6b  = document.getElementById('fw-lab6b');
+            const lbls12 = document.getElementById('fw-labels-12');
+            const lbls3  = document.getElementById('fw-labels-3');
+            const lbls6  = document.getElementById('fw-labels-6');
+            const arc    = document.getElementById('fw-arc');
+
+            let currentPillar = -1;
+            let firstShow = true;
+
+            function setLabels(el, val) { if (el) el.textContent = val; }
+
+            function morphTo(idx) {
+                if (idx === currentPillar) return;
+                currentPillar = idx;
+
+                const prev = PILLARS[(idx + 4) % 5]; // wraps: pillar 0 → prev is pillar 4
+                const curr = PILLARS[idx];
+                const next = PILLARS[(idx + 1) % 5];
+
+                // Fade labels out → swap text → fade back in
+                lbls12.style.opacity = '0';
+                lbls3.style.opacity  = '0';
+                lbls6.style.opacity  = '0';
+
+                setTimeout(() => {
+                    // 12 o'clock: previous pillar
+                    setLabels(num12,  prev[0]);
+                    setLabels(lab12a, prev[1]);
+                    setLabels(lab12b, prev[2]);
+
+                    // 3 o'clock: current pillar (active)
+                    setLabels(num3,  curr[0]);
+                    setLabels(lab3a, curr[1]);
+                    setLabels(lab3b, curr[2]);
+
+                    // 6 o'clock: next pillar
+                    setLabels(num6,  next[0]);
+                    setLabels(lab6a, next[1]);
+                    setLabels(lab6b, next[2]);
+
+                    lbls12.style.opacity = '1';
+                    lbls3.style.opacity  = '1';
+                    lbls6.style.opacity  = '1';
+                }, 200); // wait for fade-out before swapping text
+            }
+
+            function showFlywheel(pillarIdx) {
+                fw.classList.add('fw-visible');
+                morphTo(pillarIdx);
+
+                if (firstShow) {
+                    firstShow = false;
+                    // Draw the arc on first appearance
+                    setTimeout(() => {
+                        fw.classList.add('fw-drawn');
+                    }, 100);
+                }
+            }
+
+            function hideFlywheel() {
+                fw.classList.remove('fw-visible');
+            }
+
+            // Observe all slides — show/hide flywheel based on which slide is visible
+            const allSlides = document.querySelectorAll('.slide');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const slide = entry.target;
+                    const pillarIdx = slide.dataset.pillarIndex !== undefined
+                        ? parseInt(slide.dataset.pillarIndex, 10)
+                        : -1;
+
+                    if (!isNaN(pillarIdx) && pillarIdx >= 0) {
+                        showFlywheel(pillarIdx);
+                    } else {
+                        hideFlywheel();
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            allSlides.forEach(s => observer.observe(s));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+            const editor = new InlineEditor();
+            animateCounters();
+            setupFlywheelAnimation();
+            setupPersistentFlywheel();
+
+            // Mark first slide visible immediately
+            document.querySelector('.slide')?.classList.add('visible');
+        });
+    </script>
+</body>
+</html>
